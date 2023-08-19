@@ -1,0 +1,89 @@
+version: '3.7'
+
+networks:
+  garage-network:
+    name: garage-network
+    driver: bridge
+
+volumes:
+  garage-mariadb-data:
+
+services:
+
+  # garage-react: 
+  #   image: garage-react:0.1
+  #   build:
+  #     context: .
+  #     dockerfile: docker/react/Dockerfile
+  #   container_name: garage-react
+  #   restart: always
+  #   networks:
+  #     - garage-network
+  #   volumes:
+  #     - './front:/app'
+  #     - '/app/node_modules'
+  #   ports:
+  #     - 3000:3000
+
+  garage-nginx:
+    image: garage-nginx:0.1
+    build:
+      context: . # Dockerfile can access to all project
+      dockerfile: docker/nginx/Dockerfile # Dockerfile Path
+    container_name: garage-nginx
+    restart: always
+    depends_on:
+      - garage-php-fpm
+    networks:
+      - garage-network
+    ports:
+      - "8082:8082"
+    environment:
+      - TZ=${DEFAULT_TIMEZONE}
+    volumes:
+      - ./back-end:/usr/share/nginx/html
+
+  garage-php-fpm:
+    image: garage-php-fpm:0.1
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: garage-php-fpm
+    restart: always
+    depends_on:
+      - garage-mariadb
+    environment:
+      - TZ=${DEFAULT_TIMEZONE}
+    networks:
+      - garage-network
+    volumes:
+      - ./back-end:/var/www:rw
+
+  garage-mariadb:
+    image: mariadb:10.7.1-focal
+    container_name: garage-mariadb
+    restart: always
+    command: "mysqld --init-file=/data/init.sql"
+    networks:
+      - garage-network
+    environment:
+      - TZ=${DEFAULT_TIMEZONE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_USER_PASSWORD}
+      - MYSQL_DATABASE:${MYSQL_DATABASE}
+    volumes:
+      - garage-mariadb-data:/var/lib/mysql
+      - ./docker/mariadb/init.sql:/data/init.sql
+
+  garage-phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.1.1
+    restart: always
+    container_name: garage-phpmyadmin
+    networks:
+      - garage-network
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST=garage-mariadb
+  
