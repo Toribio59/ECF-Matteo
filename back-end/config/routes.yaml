@@ -11,3 +11,57 @@
 appTest:
   path: /test
   controller: App\Controller\Test::index
+
+cars:
+  path: /cars
+  controller: App\Controller\CarController::getCarsPaginated
+
+api_login_check:
+  path: /api/login_check
+
+# api_register:
+#   path: /api/register
+#   controller: App\Controller\UserController::register
+#   methods: [POST]
+
+## ----- PUBLIC ----- ##  
+
+# Cars:
+
+get_cars:
+  path: /cars/{page}
+  controller: App\Controller\CarController::getCarsPaginated
+  methods: GET
+
+# Services:
+
+get_services:
+  path: /services/{page}
+  controller: App\Controller\ServiceController::getServicesPaginated
+  methods: GET 
+
+# Testimonials:
+
+get_testimonials:
+  path: /testimonials/{page}
+  controller: App\Controller\TestimonialController::getTestimonialsPaginated
+  methods: GET
+
+
+## ----- API ----- ##
+
+# Cars:
+
+api_add_car:
+  path: /api/car
+  controller: App\Controller\CarController::addCar
+  methods: POST
+
+api_update_car:
+  path: /api/car/{id}
+  controller: App\Controller\CarController::updateCar
+  methods: PATCH
+
+# Services:
+
+

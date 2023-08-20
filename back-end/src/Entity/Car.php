@@ -18,7 +18,7 @@ class Car
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=50)
      */
     private $title;
 
@@ -28,7 +28,7 @@ class Car
     private $price;
 
     /**
-     * @ORM\Column(type="string", length=4)
+     * @ORM\Column(type="integer")
      */
     private $manufactureYear;
 
@@ -43,14 +43,14 @@ class Car
     private $description;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="string", length=255)
      */
-    private $listOfImages = [];
+    private $model;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=50)
      */
-    private $addedBy;
+    private $brand;
 
     public function getId(): ?int
     {
@@ -81,12 +81,12 @@ class Car
         return $this;
     }
 
-    public function getManufactureYear(): ?string
+    public function getManufactureYear(): ?int
     {
         return $this->manufactureYear;
     }
 
-    public function setManufactureYear(string $manufactureYear): self
+    public function setManufactureYear(int $manufactureYear): self
     {
         $this->manufactureYear = $manufactureYear;
 
@@ -117,26 +117,26 @@ class Car
         return $this;
     }
 
-    public function getListOfImages(): ?array
+    public function getModel(): ?string
     {
-        return $this->listOfImages;
+        return $this->model;
     }
 
-    public function setListOfImages(array $listOfImages): self
+    public function setModel(string $model): self
     {
-        $this->listOfImages = $listOfImages;
+        $this->model = $model;
 
         return $this;
     }
 
-    public function getAddedBy(): ?int
+    public function getBrand(): ?string
     {
-        return $this->addedBy;
+        return $this->brand;
     }
 
-    public function setAddedBy(int $addedBy): self
+    public function setBrand(string $brand): self
     {
-        $this->addedBy = $addedBy;
+        $this->brand = $brand;
 
         return $this;
     }

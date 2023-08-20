@@ -18,11 +18,6 @@ class Testimonial
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $name;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $rating;
@@ -32,21 +27,19 @@ class Testimonial
      */
     private $status;
 
+    /**
+     * @ORM\Column(type="string", length=20)
+     */
+    private $author;
+
+    /**
+     * @ORM\Column(type="string", length=500, nullable=true)
+     */
+    private $content;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getRating(): ?int
@@ -69,6 +62,30 @@ class Testimonial
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(string $author): self
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(?string $content): self
+    {
+        $this->content = $content;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Testimonial;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @extends ServiceEntityRepository<Testimonial>
@@ -39,28 +40,26 @@ class TestimonialRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Testimonial[] Returns an array of Testimonial objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function searchTestimonal(array $params, $page, $postsPerPage): array
+    {
+        $query = $this->createQueryBuilder('c');
 
-//    public function findOneBySomeField($value): ?Testimonial
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        if (isset($params['ratings'])) {
+            $params['ratings'] = explode(',', $params['ratings']);
+
+            $query->andWhere('c.rating IN (:ratings)')
+                ->setParameter('ratings', $params['ratings']);  
+        }
+
+        $paginator = new Paginator($query);
+        $paginator->getQuery()
+            ->setFirstResult($postsPerPage * ($page - 1)) // Offset
+            ->setMaxResults($postsPerPage); // Limit
+
+        $data["list"] = $paginator->getQuery()->getResult();
+        $data['total'] = (int)$query->select($query->expr()->countDistinct('c.id'))
+            ->getQuery()
+            ->getSingleScalarResult();
+        return $data;
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Service;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @extends ServiceEntityRepository<Service>
@@ -39,28 +40,20 @@ class ServiceRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Service[] Returns an array of Service objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function searchService(array $params, $page, $postsPerPage): array
+    {
+        $query = $this->createQueryBuilder('c');
 
-//    public function findOneBySomeField($value): ?Service
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        $paginator = new Paginator($query);
+        $paginator->getQuery()
+            ->setFirstResult($postsPerPage * ($page - 1)) // Offset
+            ->setMaxResults($postsPerPage); // Limit
+
+        $data["list"] = $paginator->getQuery()->getResult();
+        $data['total'] = (int)$query->select($query->expr()->countDistinct('c.id'))
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $data;
+    }
 }
